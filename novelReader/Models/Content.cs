@@ -23,6 +23,18 @@ namespace novelReader.Models
             this.IsHeader = matchResult.Success;
         }
 
+        public double EstimateReadingTime(int speed)
+        {
+            if (this.IsHeader)
+            {
+                return 1000.0; // 1s
+            }
+            else
+            {
+                return ((double) this.Text.Length / speed) * 1000.0;
+            }
+        }
+
         public override string ToString()
         {
             return this.Text;

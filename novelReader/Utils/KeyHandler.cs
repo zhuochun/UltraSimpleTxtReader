@@ -22,7 +22,7 @@ namespace novelReader.Utils
             switch (e.Key)
             {
                 case Key.J:
-                    if (this.Element.SelectedIndex < this.Element.Items.Count)
+                    if (this.Element.SelectedIndex + 1 < this.Element.Items.Count)
                     {
                         this.Element.SelectedIndex += 1;
                     }

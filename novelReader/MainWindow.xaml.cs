@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -30,6 +31,9 @@ namespace novelReader
         private KeyHandler headerListBoxHandler;
         private KeyHandler paragraphListBoxHandler;
 
+        private Timer autoScrollTimer = new Timer();
+        private int autoScrollSpeed = 30; // char per second
+
         public MainWindow()
         {
             InitializeComponent();
@@ -37,6 +41,29 @@ namespace novelReader
 
             headerListBoxHandler = new HeaderListBoxKeyHandler(HeaderListBox, ParagraphListBox);
             paragraphListBoxHandler = new ParagraphListBoxKeyHandler(ParagraphListBox, HeaderListBox);
+
+            autoScrollTimer.AutoReset = true;
+            autoScrollTimer.Interval = 1000;
+            autoScrollTimer.Elapsed += autoScrollTimer_Elapsed;
+        }
+
+        void autoScrollTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Dispatcher.Invoke((Action)(() =>
+            {
+                if (ParagraphListBox.SelectedIndex + 1 < ParagraphListBox.Items.Count)
+                {
+                    ParagraphListBox.SelectedIndex += 1;
+                    ParagraphListBox.ScrollIntoView(ParagraphListBox.SelectedItem);
+
+                    autoScrollTimer.Interval = ((Content)ParagraphListBox.SelectedItem).EstimateReadingTime(autoScrollSpeed);
+                    autoScrollTimer.Start();
+                }
+                else
+                {
+                    AutoScrollCheckBox.IsChecked = false;
+                }
+            }));
         }
 
         private void LoadLastFile()
@@ -150,6 +177,7 @@ namespace novelReader
 
             // update status
             UpdateReadingStatus();
+            UpdateEstimatedTotalReadingTime();
         }
 
         private void UpdateReadingStatus()
@@ -160,11 +188,17 @@ namespace novelReader
             int totalChapters = HeaderListBox.Items.Count;
             int currentChapter = HeaderListBox.SelectedIndex + 1;
 
-            double percentage = ((double) currentParagraph / totalParagraphs) * 100.0;
+            if (currentParagraph == totalParagraphs)
+            {
+                StatusTextBox.Text = "你已经看完了！";
+            }
+            else
+            {
+                double percentage = ((double) currentParagraph / totalParagraphs) * 100.0;
 
-            StatusTextBox.Text = String.Format("你在 {0}/{1} 章， {2}/{3} 段， 看了差不多 {4:F}%",
-                    currentChapter, totalChapters,
-                    currentParagraph, totalParagraphs, percentage);
+                StatusTextBox.Text = String.Format("你在第{2}/{3}段，{0}/{1}章，已经看了{4:F}%",
+                        currentChapter, totalChapters, currentParagraph, totalParagraphs, percentage);
+            }
         }
 
         private void HeaderListBox_KeyDown(object sender, KeyEventArgs e)
@@ -175,6 +209,45 @@ namespace novelReader
         private void ParagraphListBox_KeyDown(object sender, KeyEventArgs e)
         {
             e.Handled = paragraphListBoxHandler.Handle(e);
+        }
+
+        private void AutoScrollCheckBox_State_Changed(object sender, RoutedEventArgs e)
+        {
+            if (AutoScrollCheckBox.IsChecked == true)
+            {
+                autoScrollSpeed = Int32.Parse(AutoScrollSpeedTextBox.Text);
+                autoScrollTimer.Interval = ((Content)ParagraphListBox.SelectedItem).EstimateReadingTime(autoScrollSpeed);
+                autoScrollTimer.Enabled = true; 
+                autoScrollTimer.Start();
+            }
+            else
+            {
+                autoScrollTimer.Stop();
+                autoScrollTimer.Enabled = false;
+            }
+        }
+
+        private void UpdateEstimatedTotalReadingTime()
+        {
+            double totalTime = ((App)Application.Current).Novel
+                                   .Skip(ParagraphListBox.SelectedIndex)
+                                   .Sum(p => p.EstimateReadingTime(autoScrollSpeed)) / 1000.0;
+
+            int hour = (int) totalTime / 3600;
+            int minute = ((int)totalTime - hour * 3600) / 60;
+
+            if (hour > 0)
+            {
+                TotalReadingTimeEstimate.Text = "需" + hour + "小时";
+            }
+            else if (minute > 1)
+            {
+                TotalReadingTimeEstimate.Text = "需" + minute + "分钟";
+            }
+            else
+            {
+                TotalReadingTimeEstimate.Text = "小于1分钟";
+            }
         }
     }
 }
