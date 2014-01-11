@@ -1,0 +1,38 @@
+﻿<Application x:Class="novelReader.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+
+        <Style x:Key="HeaderListStyle">
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#EEE8D5" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#586E75" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#EEE8D5" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#586E75" />
+            </Style.Resources>
+        </Style>
+
+        <Style x:Key="ParagraphListStyle">
+            <Style.Resources>
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#EEE8D5" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#586E75" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#EEE8D5" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#586E75" />
+            </Style.Resources>
+        </Style>
+
+        <DataTemplate x:Key="HeaderTemplate">
+            <TextBlock TextWrapping="Wrap"
+                       Text="{Binding Path=Text}"
+                       Padding="3,5" FontFamily="Microsoft YaHei" FontSize="12"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ParagraphTemplate">
+            <TextBlock TextWrapping="Wrap"
+                       Text="{Binding Path=Text}"
+                       Padding="3,9" FontFamily="Microsoft YaHei" FontSize="18"/>
+        </DataTemplate>
+
+    </Application.Resources>
+</Application>

@@ -1,0 +1,54 @@
+﻿<Window x:Class="novelReader.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="无比简易小说阅读器"
+        Height="600" Width="800" MinWidth="600" MinHeight="500"
+        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+    <Window.Resources>
+        <CollectionViewSource 
+              Source="{Binding Source={x:Static Application.Current}, Path=Novel}"
+              x:Key="paragraphList" />
+        <CollectionViewSource 
+              Source="{Binding Source={x:Static Application.Current}, Path=Headers}"
+              x:Key="headerList" />
+    </Window.Resources>
+    <DockPanel LastChildFill="True">
+        <Grid Height="50" DockPanel.Dock="Top">
+            <Button x:Name="openDialog" Content="打开文件" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="openDialog_Click" Height="30"/>
+            <TextBlock x:Name="StatusTextBox" HorizontalAlignment="Right" Margin="0,10,10,0" TextWrapping="Wrap" Text="左边打开一个文件呗" Height="30" Width="510" FontFamily="Microsoft YaHei" FontSize="14" TextAlignment="Right" ScrollViewer.VerticalScrollBarVisibility="Disabled" VerticalAlignment="Top" Padding="5"/>
+        </Grid>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="17*"/>
+                <ColumnDefinition Width="33*"/>
+            </Grid.ColumnDefinitions>
+
+            <GridSplitter HorizontalAlignment="Left" Width="5" Grid.Column="1" />
+
+            <ListBox x:Name="HeaderListBox"
+                ItemsSource="{Binding Source={StaticResource headerList}}"
+                ItemTemplate="{StaticResource HeaderTemplate}"
+
+                KeyDown="HeaderListBox_KeyDown"
+                MouseDoubleClick="HeaderListBox_MouseDoubleClick"
+
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                HorizontalContentAlignment="Stretch"
+                Style="{StaticResource HeaderListStyle}"
+                Foreground="#FF93A1A1" BorderThickness="0,1,0,0" />
+
+            <ListBox x:Name="ParagraphListBox"
+                ItemsSource="{Binding Source={StaticResource paragraphList}}"
+                ItemTemplate="{StaticResource ParagraphTemplate}"
+
+                KeyDown="ParagraphListBox_KeyDown"
+                SelectionChanged="ParagraphListBox_SelectionChanged"
+
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                HorizontalContentAlignment="Stretch"
+                Style="{StaticResource ParagraphListStyle}"
+                Background="#FFFDF6E3" Foreground="#FF839496"
+                Margin="5,0,0,0" Grid.Column="1" BorderThickness="0,1,0,0" />
+        </Grid>
+    </DockPanel>
+</Window>
