@@ -71,8 +71,10 @@ namespace novelReader
 
             NovelFile.Open(path, app.Novel);
 
-            foreach (Content c in app.Novel) {
-                if (c.IsHeader) {
+            foreach (Content c in app.Novel)
+            {
+                if (c.IsHeader)
+                {
                     app.Headers.Add(c);
                 }
             }
@@ -153,10 +155,10 @@ namespace novelReader
         private void UpdateReadingStatus()
         {
             int totalParagraphs = ParagraphListBox.Items.Count;
-            int currentParagraph = ParagraphListBox.SelectedIndex;
+            int currentParagraph = ParagraphListBox.SelectedIndex + 1;
 
             int totalChapters = HeaderListBox.Items.Count;
-            int currentChapter = HeaderListBox.SelectedIndex;
+            int currentChapter = HeaderListBox.SelectedIndex + 1;
 
             double percentage = ((double) currentParagraph / totalParagraphs) * 100.0;
 

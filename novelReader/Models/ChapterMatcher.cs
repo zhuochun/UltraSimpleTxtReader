@@ -9,7 +9,7 @@ namespace novelReader.Models
 {
     public class ChapterMatcher
     {
-        static Regex chapterRegex = new Regex(@"(\b第.*[章篇]\b.*)");
+        static Regex chapterRegex = new Regex(@"(?:^\s*|^\s*第.*?)(第[^\s,.，。]*?[章篇]\s?.*)");
 
         public static Match Exec(string text)
         {

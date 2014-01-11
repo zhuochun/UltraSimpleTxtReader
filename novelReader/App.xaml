@@ -24,7 +24,7 @@
 
         <DataTemplate x:Key="HeaderTemplate">
             <TextBlock TextWrapping="Wrap"
-                       Text="{Binding Path=Text}"
+                       Text="{Binding Path=Header}"
                        Padding="3,5" FontFamily="Microsoft YaHei" FontSize="12"/>
         </DataTemplate>
 
