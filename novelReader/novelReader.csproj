@@ -26,10 +26,10 @@
     <MapFileExtensions>true</MapFileExtensions>
     <SupportUrl>https://github.com/zhuochun/novelReader</SupportUrl>
     <ProductName>UltraSimpleTxtReader</ProductName>
-    <PublisherName>Wang Zhuochun</PublisherName>
+    <PublisherName>UltraSimpleTxtReader</PublisherName>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>11</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
