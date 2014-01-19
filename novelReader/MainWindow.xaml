@@ -16,7 +16,7 @@
         <Grid Height="50" DockPanel.Dock="Top">
             <Button x:Name="openDialog" Content="打开文件" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="openDialog_Click" Height="30"/>
             <CheckBox x:Name="AutoScrollCheckBox" Content="自动滚动" Checked="AutoScrollCheckBox_State_Changed" Unchecked="AutoScrollCheckBox_State_Changed" HorizontalAlignment="Left" Margin="99,15,0,0" Padding="5,0,0,0" FontSize="16" VerticalAlignment="Top"/>
-            <TextBox x:Name="AutoScrollSpeedTextBox" HorizontalAlignment="Left" Text="25" Height="30" Margin="186,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="16" UndoLimit="10" HorizontalContentAlignment="Right"/>
+            <TextBox x:Name="AutoScrollSpeedTextBox" LostFocus="AutoScrollSpeedTextBox_LostFocus" HorizontalAlignment="Left" Text="25" Height="30" Margin="186,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="16" UndoLimit="10" HorizontalContentAlignment="Right"/>
             <TextBlock HorizontalAlignment="Left" Margin="229,10,0,0" TextWrapping="Wrap" Text="字/秒" VerticalAlignment="Top" Height="30" FontSize="16" Padding="0,5"/>
             <TextBlock x:Name="TotalReadingTimeEstimate" HorizontalAlignment="Left" Margin="281,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="30" FontSize="16" Padding="0,5" Width="126"/>
             <TextBlock x:Name="StatusTextBox" HorizontalAlignment="Right" Margin="0,10,10,0" TextWrapping="Wrap" Text="左边打开一个文件呗" Height="30" Width="470" FontSize="16" TextAlignment="Right" VerticalAlignment="Top" Padding="5"/>

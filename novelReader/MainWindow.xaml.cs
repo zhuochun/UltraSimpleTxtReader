@@ -35,7 +35,7 @@ namespace novelReader
         private KeyHandler paragraphListBoxHandler;
 
         private Timer autoScrollTimer = new Timer();
-        private int autoScrollSpeed = 30; // char per second
+        private int autoScrollSpeed = 25; // char per second
 
         public MainWindow()
         {
@@ -216,7 +216,6 @@ namespace novelReader
         {
             if (AutoScrollCheckBox.IsChecked == true)
             {
-                autoScrollSpeed = Int32.Parse(AutoScrollSpeedTextBox.Text);
                 autoScrollTimer.Interval = editor.CurrentLineItem().EstimateReadingTime(autoScrollSpeed);
                 autoScrollTimer.Enabled = true; 
                 autoScrollTimer.Start();
@@ -228,6 +227,11 @@ namespace novelReader
             }
 
             editor.Focus();
+        }
+
+        private void AutoScrollSpeedTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            autoScrollSpeed = Int32.Parse(AutoScrollSpeedTextBox.Text);
         }
 
         private void UpdateEstimatedTotalReadingTime()
