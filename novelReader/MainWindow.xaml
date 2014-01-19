@@ -47,12 +47,13 @@
 
                 KeyDown="ParagraphListBox_KeyDown"
                 SelectionChanged="ParagraphListBox_SelectionChanged"
+                Drop="ParagraphListBox_Drop"
 
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 HorizontalContentAlignment="Stretch"
                 Style="{StaticResource ParagraphListStyle}"
                 Background="#FFFDF6E3" Foreground="#FF839496"
-                Margin="5,0,0,0" Grid.Column="1" BorderThickness="0,1,0,0" />
+                Margin="5,0,0,0" Grid.Column="1" BorderThickness="0,1,0,0" AllowDrop="True" />
         </Grid>
     </DockPanel>
 </Window>

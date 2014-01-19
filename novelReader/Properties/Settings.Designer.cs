@@ -58,5 +58,17 @@ namespace novelReader.Properties {
                 this["LastFileLineNum"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        public int ReadingSpeed {
+            get {
+                return ((int)(this["ReadingSpeed"]));
+            }
+            set {
+                this["ReadingSpeed"] = value;
+            }
+        }
     }
 }

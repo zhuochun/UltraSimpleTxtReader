@@ -24,5 +24,16 @@ namespace novelReader
             get { return this.headers; }
             set { this.headers = value; }
         }
+
+        public void AppStartup(object sender, StartupEventArgs args)
+        {
+            MainWindow mainWindow = new MainWindow();
+
+            if (args.Args.Length > 0) {
+                mainWindow.LoadFile(args.Args[0]);
+            }
+
+            mainWindow.Show();
+        }
     }
 }

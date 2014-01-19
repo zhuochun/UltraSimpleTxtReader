@@ -54,23 +54,30 @@ namespace novelReader
             LoadLastFile();
         }
 
-        void autoScrollTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private bool OpenAndLoadFile(string path)
         {
-            Dispatcher.Invoke((Action)(() =>
-            {
-                if (editor.IsAtLastLine())
-                {
-                    AutoScrollCheckBox.IsChecked = false;
-                }
-                else
-                {
-                    editor.FocusOnNextLine();
+            if (String.IsNullOrEmpty(path))
+                return false;
 
-                    autoScrollTimer.Interval = editor.CurrentLineItem().EstimateReadingTime(autoScrollSpeed);
-                    autoScrollTimer.Start();
+            App app = (App) Application.Current;
+            app.Novel.Clear();
+            app.Headers.Clear();
+
+            NovelFile.Open(path, app.Novel);
+
+            foreach (Content c in app.Novel)
+            {
+                if (c.IsHeader)
+                {
+                    app.Headers.Add(c);
                 }
-            }));
+            }
+
+            this.Title = "无比简易小说阅读器 - " + path;
+
+            return true;
         }
+
 
         private void LoadLastFile()
         {
@@ -93,26 +100,31 @@ namespace novelReader
             }
         }
 
-        private bool OpenAndLoadFile(string path)
+        public void LoadFile(string filename)
         {
-            if (String.IsNullOrEmpty(path))
-                return false;
-
-            App app = (App) Application.Current;
-            app.Novel.Clear();
-            app.Headers.Clear();
-
-            NovelFile.Open(path, app.Novel);
-
-            foreach (Content c in app.Novel)
+            try
             {
-                if (c.IsHeader)
+                if (OpenAndLoadFile(filename))
                 {
-                    app.Headers.Add(c);
+                    ScrollToLine(0, 0);
+
+                    // save to settings
+                    Settings.Default.LastFilePath = filename;
+                    Settings.Default.LastFileChapter = 0;
+                    Settings.Default.LastFileLineNum = 0;
+                    Settings.Default.Save();
                 }
             }
+            catch (FileNotFoundException e)
+            {
+                MessageBox.Show("你选择的文件： " + e.FileName + " 读取遇到了问题。", "读取文件错误！");
 
-            return true;
+                // reset settings
+                Settings.Default.LastFilePath = "";
+                Settings.Default.LastFileChapter = -1;
+                Settings.Default.LastFileLineNum = -1;
+                Settings.Default.Save();
+            }
         }
 
         private void openDialog_Click(object sender, RoutedEventArgs e)
@@ -123,15 +135,18 @@ namespace novelReader
             fileDialog.Filter = "Text files (*.txt)|*.txt";
             fileDialog.ShowDialog();
 
-            if (OpenAndLoadFile(fileDialog.FileName))
-            {
-                ScrollToLine(0, 0);
+            LoadFile(fileDialog.FileName);
+        }
 
-                // save to settings
-                Settings.Default.LastFilePath = fileDialog.FileName;
-                Settings.Default.LastFileChapter = 0;
-                Settings.Default.LastFileLineNum = 0;
-                Settings.Default.Save();
+        private void ParagraphListBox_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                // can have more than one file.
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                // handle the first file only
+                LoadFile(files[0]);
             }
         }
 
@@ -214,6 +229,12 @@ namespace novelReader
 
         private void AutoScrollCheckBox_State_Changed(object sender, RoutedEventArgs e)
         {
+            if (editor.LineCount() < 1)
+            {
+                AutoScrollCheckBox.IsChecked = false;
+                return;
+            }
+
             if (AutoScrollCheckBox.IsChecked == true)
             {
                 autoScrollTimer.Interval = editor.CurrentLineItem().EstimateReadingTime(autoScrollSpeed);
@@ -227,6 +248,24 @@ namespace novelReader
             }
 
             editor.Focus();
+        }
+
+        void autoScrollTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Dispatcher.Invoke((Action)(() =>
+            {
+                if (editor.IsAtLastLine())
+                {
+                    AutoScrollCheckBox.IsChecked = false;
+                }
+                else
+                {
+                    editor.FocusOnNextLine();
+
+                    autoScrollTimer.Interval = editor.CurrentLineItem().EstimateReadingTime(autoScrollSpeed);
+                    autoScrollTimer.Start();
+                }
+            }));
         }
 
         private void AutoScrollSpeedTextBox_LostFocus(object sender, RoutedEventArgs e)
