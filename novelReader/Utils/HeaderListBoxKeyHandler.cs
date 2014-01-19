@@ -1,4 +1,5 @@
-﻿using System;
+﻿using novelReader.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,9 +11,9 @@ namespace novelReader.Utils
 {
     public class HeaderListBoxKeyHandler : KeyHandler
     {
-        public ListBox Paragraphs { get; set; }
+        public ListBoxWrapper Paragraphs { get; set; }
 
-        public HeaderListBoxKeyHandler(ListBox headers, ListBox paragraphs) : base(headers)
+        public HeaderListBoxKeyHandler(ListBoxWrapper headers, ListBoxWrapper paragraphs) : base(headers)
         {
             this.Paragraphs = paragraphs;
         }
@@ -22,28 +23,17 @@ namespace novelReader.Utils
             switch (e.Key)
             {
                 case Key.Enter:
-                    this.Paragraphs.SelectedItem = this.Element.SelectedItem;
-                    this.Paragraphs.ScrollIntoView(this.Paragraphs.SelectedItem);
+                    this.Paragraphs.FocusOnLineItem(this.Element.CurrentLineItem());
 
                     return true;
                 case Key.P:
-                    if (this.Element.SelectedIndex > 0)
-                    {
-                        this.Element.SelectedIndex -= 1;
-                    }
-
-                    this.Paragraphs.SelectedItem = this.Element.SelectedItem;
-                    this.Paragraphs.ScrollIntoView(this.Paragraphs.SelectedItem);
+                    this.Element.FocusOnPrevLine();
+                    this.Paragraphs.FocusOnLineItem(this.Element.CurrentLineItem());
 
                     return true;
                 case Key.N:
-                    if (this.Element.SelectedIndex < this.Element.Items.Count)
-                    {
-                        this.Element.SelectedIndex += 1;
-                    }
-
-                    this.Paragraphs.SelectedItem = this.Element.SelectedItem;
-                    this.Paragraphs.ScrollIntoView(this.Paragraphs.SelectedItem);
+                    this.Element.FocusOnNextLine();
+                    this.Paragraphs.FocusOnLineItem(this.Element.CurrentLineItem());
 
                     return true;
                 case Key.L:

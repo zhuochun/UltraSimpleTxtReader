@@ -26,7 +26,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ProductName>UltraSimpleTxtReader</ProductName>
     <PublisherName>Wang Zhuochun</PublisherName>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>9</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -90,6 +90,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\ListBoxWrapper.cs" />
+    <Compile Include="Models\Reader.cs" />
+    <Compile Include="Models\Sidebar.cs" />
     <Compile Include="Utils\HeaderListBoxKeyHandler.cs" />
     <Compile Include="Utils\KeyHandler.cs" />
     <Compile Include="Utils\ParagraphListBoxKeyHandler.cs" />

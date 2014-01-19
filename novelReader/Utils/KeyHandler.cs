@@ -1,4 +1,5 @@
-﻿using System;
+﻿using novelReader.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,11 @@ using System.Windows.Input;
 
 namespace novelReader.Utils
 {
-    public class KeyHandler
+    public abstract class KeyHandler
     {
-        public ListBox Element { get; set; }
+        public ListBoxWrapper Element { get; set; }
 
-        public KeyHandler(ListBox e)
+        public KeyHandler(ListBoxWrapper e)
         {
             this.Element = e;
         }
@@ -22,31 +23,19 @@ namespace novelReader.Utils
             switch (e.Key)
             {
                 case Key.J:
-                    if (this.Element.SelectedIndex + 1 < this.Element.Items.Count)
-                    {
-                        this.Element.SelectedIndex += 1;
-                    }
-
-                    this.Element.ScrollIntoView(this.Element.SelectedItem);
+                    this.Element.FocusOnNextLine();
 
                     return true;
                 case Key.K:
-                    if (this.Element.SelectedIndex > 0)
-                    {
-                        this.Element.SelectedIndex -= 1;
-                    }
-
-                    this.Element.ScrollIntoView(this.Element.SelectedItem);
+                    this.Element.FocusOnPrevLine();
 
                     return true;
                 case Key.T:
-                    this.Element.SelectedItem = this.Element.Items[0];
-                    this.Element.ScrollIntoView(this.Element.SelectedItem);
+                    this.Element.FocusOnFirstLine();
 
                     return true;
                 case Key.G:
-                    this.Element.SelectedItem = this.Element.Items[this.Element.Items.Count - 1];
-                    this.Element.ScrollIntoView(this.Element.SelectedItem);
+                    this.Element.FocusOnLastLine();
 
                     return true;
                 default: break;

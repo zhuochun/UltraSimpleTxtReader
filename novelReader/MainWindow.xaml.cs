@@ -28,6 +28,9 @@ namespace novelReader
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ListBoxWrapper editor;
+        private ListBoxWrapper sidebar;
+
         private KeyHandler headerListBoxHandler;
         private KeyHandler paragraphListBoxHandler;
 
@@ -37,31 +40,34 @@ namespace novelReader
         public MainWindow()
         {
             InitializeComponent();
-            LoadLastFile();
 
-            headerListBoxHandler = new HeaderListBoxKeyHandler(HeaderListBox, ParagraphListBox);
-            paragraphListBoxHandler = new ParagraphListBoxKeyHandler(ParagraphListBox, HeaderListBox);
+            editor = new Reader(ParagraphListBox);
+            sidebar = new Sidebar(HeaderListBox);
+
+            headerListBoxHandler = new HeaderListBoxKeyHandler(sidebar, editor);
+            paragraphListBoxHandler = new ParagraphListBoxKeyHandler(editor, sidebar);
 
             autoScrollTimer.AutoReset = true;
             autoScrollTimer.Interval = 1000;
             autoScrollTimer.Elapsed += autoScrollTimer_Elapsed;
+
+            LoadLastFile();
         }
 
         void autoScrollTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             Dispatcher.Invoke((Action)(() =>
             {
-                if (ParagraphListBox.SelectedIndex + 1 < ParagraphListBox.Items.Count)
+                if (editor.IsAtLastLine())
                 {
-                    ParagraphListBox.SelectedIndex += 1;
-                    ParagraphListBox.ScrollIntoView(ParagraphListBox.SelectedItem);
-
-                    autoScrollTimer.Interval = ((Content)ParagraphListBox.SelectedItem).EstimateReadingTime(autoScrollSpeed);
-                    autoScrollTimer.Start();
+                    AutoScrollCheckBox.IsChecked = false;
                 }
                 else
                 {
-                    AutoScrollCheckBox.IsChecked = false;
+                    editor.FocusOnNextLine();
+
+                    autoScrollTimer.Interval = editor.CurrentLineItem().EstimateReadingTime(autoScrollSpeed);
+                    autoScrollTimer.Start();
                 }
             }));
         }
@@ -131,48 +137,43 @@ namespace novelReader
 
         private void ScrollToLine(int lineNum, int chapterNum)
         {
-            HeaderListBox.SelectedIndex = chapterNum;
-            HeaderListBox.ScrollIntoView(HeaderListBox.SelectedItem);
-
-            ParagraphListBox.SelectedIndex = lineNum;
-            ParagraphListBox.ScrollIntoView(ParagraphListBox.SelectedItem);
-            ParagraphListBox.Focus();
+            sidebar.FocusOnLine(chapterNum);
+            editor.FocusOnLine(lineNum);
+            editor.Focus();
         }
 
         private void HeaderListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            ParagraphListBox.SelectedItem = HeaderListBox.SelectedItem;
-            ParagraphListBox.ScrollIntoView(ParagraphListBox.SelectedItem);
+            editor.FocusOnLineItem(sidebar.CurrentLineItem());
+            editor.Focus();
 
             // save settings
-            Settings.Default.LastFileChapter = HeaderListBox.SelectedIndex;
-            Settings.Default.LastFileLineNum = ParagraphListBox.SelectedIndex;
+            Settings.Default.LastFileChapter = sidebar.CurrentLine();
+            Settings.Default.LastFileLineNum = editor.CurrentLine();
             Settings.Default.Save();
-
-            // focus content
-            ParagraphListBox.Focus();
         }
 
         private void ParagraphListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // find chapter
+            // find nearest chapter
             App app = (App) Application.Current;
+            object header = app.Headers.First();
 
-            for (int i = ParagraphListBox.SelectedIndex; i >= 0; i--)
+            for (int i = editor.CurrentLine(); i >= 0; i--)
             {
                 if (app.Novel[i].IsHeader)
                 {
-                    HeaderListBox.SelectedItem = app.Novel[i];
-                    HeaderListBox.ScrollIntoView(HeaderListBox.SelectedItem);
-
-                    Settings.Default.LastFileChapter = HeaderListBox.SelectedIndex;
-
+                    header = i;
                     break;
                 }
             }
 
+            // select chapter
+            sidebar.FocusOnLineItem(header);
+
             // save settings
-            Settings.Default.LastFileLineNum = ParagraphListBox.SelectedIndex;
+            Settings.Default.LastFileChapter = sidebar.CurrentLine();
+            Settings.Default.LastFileLineNum = editor.CurrentLine();
             Settings.Default.Save();
 
             // update status
@@ -182,11 +183,11 @@ namespace novelReader
 
         private void UpdateReadingStatus()
         {
-            int totalParagraphs = ParagraphListBox.Items.Count;
-            int currentParagraph = ParagraphListBox.SelectedIndex + 1;
+            int totalParagraphs = editor.LineCount();
+            int currentParagraph = editor.CurrentLine() + 1;
 
-            int totalChapters = HeaderListBox.Items.Count;
-            int currentChapter = HeaderListBox.SelectedIndex + 1;
+            int totalChapters = sidebar.LineCount();
+            int currentChapter = sidebar.CurrentLine() + 1;
 
             if (currentParagraph == totalParagraphs)
             {
@@ -216,7 +217,7 @@ namespace novelReader
             if (AutoScrollCheckBox.IsChecked == true)
             {
                 autoScrollSpeed = Int32.Parse(AutoScrollSpeedTextBox.Text);
-                autoScrollTimer.Interval = ((Content)ParagraphListBox.SelectedItem).EstimateReadingTime(autoScrollSpeed);
+                autoScrollTimer.Interval = editor.CurrentLineItem().EstimateReadingTime(autoScrollSpeed);
                 autoScrollTimer.Enabled = true; 
                 autoScrollTimer.Start();
             }
@@ -225,12 +226,14 @@ namespace novelReader
                 autoScrollTimer.Stop();
                 autoScrollTimer.Enabled = false;
             }
+
+            editor.Focus();
         }
 
         private void UpdateEstimatedTotalReadingTime()
         {
             double totalTime = ((App)Application.Current).Novel
-                                   .Skip(ParagraphListBox.SelectedIndex)
+                                   .Skip(editor.CurrentLine())
                                    .Sum(p => p.EstimateReadingTime(autoScrollSpeed)) / 1000.0;
 
             int hour = (int) totalTime / 3600;

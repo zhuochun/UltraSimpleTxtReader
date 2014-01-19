@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="无比简易小说阅读器"
-        Height="600" Width="800" MinWidth="600" MinHeight="500"
+        Height="600" Width="900" MinWidth="600" MinHeight="500"
         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
     <Window.Resources>
         <CollectionViewSource 
@@ -19,7 +19,7 @@
             <TextBox x:Name="AutoScrollSpeedTextBox" HorizontalAlignment="Left" Text="25" Height="30" Margin="186,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="38" FontSize="16" UndoLimit="10" HorizontalContentAlignment="Right"/>
             <TextBlock HorizontalAlignment="Left" Margin="229,10,0,0" TextWrapping="Wrap" Text="字/秒" VerticalAlignment="Top" Height="30" FontSize="16" Padding="0,5"/>
             <TextBlock x:Name="TotalReadingTimeEstimate" HorizontalAlignment="Left" Margin="281,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="30" FontSize="16" Padding="0,5" Width="126"/>
-            <TextBlock x:Name="StatusTextBox" HorizontalAlignment="Right" Margin="0,10,10,0" TextWrapping="Wrap" Text="左边打开一个文件呗" Height="30" Width="370" FontSize="16" TextAlignment="Right" VerticalAlignment="Top" Padding="5"/>
+            <TextBlock x:Name="StatusTextBox" HorizontalAlignment="Right" Margin="0,10,10,0" TextWrapping="Wrap" Text="左边打开一个文件呗" Height="30" Width="470" FontSize="16" TextAlignment="Right" VerticalAlignment="Top" Padding="5"/>
         </Grid>
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
