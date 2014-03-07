@@ -170,8 +170,15 @@ namespace novelReader
 
         private void ParagraphListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // find nearest chapter
             App app = (App) Application.Current;
+
+            // empty headers
+            if (app.Headers.Count < 1)
+            {
+                return;
+            }
+
+            // find nearest chapter
             object header = app.Headers.First();
 
             for (int i = editor.CurrentLine(); i >= 0; i--)
