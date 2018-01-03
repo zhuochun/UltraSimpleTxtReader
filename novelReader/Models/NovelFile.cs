@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -14,23 +14,45 @@ namespace novelReader.Models
         {
             if (String.IsNullOrEmpty(path))
             {
-                return ;
+                return;
             }
 
-            using (FileStream fs = File.Open(path, FileMode.Open, FileAccess.Read))
-            using (BufferedStream bs = new BufferedStream(fs))
-            using (StreamReader sr = new StreamReader(bs, Encoding.Default))
-            {
-                String line;
+            FileStream fs = File.Open(path, FileMode.Open, FileAccess.Read);
 
-                while ((line = sr.ReadLine()) != null)
+            StreamReader sr = new StreamReader(fs);
+            if (sr.CurrentEncoding == Encoding.UTF8)
+            {
+                var chArr = new char[1024];
+                sr.Read(chArr, 0, chArr.Length);
+                var buffer1 = Encoding.UTF8.GetBytes(chArr);
+                var buffer2 = new byte[buffer1.Length];
+                fs.Position = 0;
+                fs.Read(buffer2, 0, buffer2.Length);
+                var same = true;
+                for (int i = 0; i < buffer1.Length; i++)
                 {
-                    if (!String.IsNullOrWhiteSpace(line))
+                    if (buffer1[i] != buffer2[i])
                     {
-                        novel.Add(new Content(line));
+                        same = false;
+                        break;
                     }
                 }
+                if (!same)
+                {
+                    fs.Position = 0;
+                    sr = new StreamReader(fs, Encoding.GetEncoding("GBK"));
+                }
             }
+            String line;
+
+            while ((line = sr.ReadLine()) != null)
+            {
+                if (!String.IsNullOrWhiteSpace(line))
+                {
+                    novel.Add(new Content(line));
+                }
+            }
+            sr.Dispose();
         }
     }
 }
